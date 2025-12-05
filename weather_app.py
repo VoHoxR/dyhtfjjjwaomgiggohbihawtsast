@@ -30,7 +30,8 @@ class WeatherApp:
 
         self.favorites = []
         self.current_city = ""
-        self.current_unit = "F"
+        self.current_unit = "C"
+        self.current_mode = 0
         # make widgets
 
         self.load_favorites()
@@ -119,7 +120,7 @@ class WeatherApp:
             relief = "solid",
             borderwidth=3
         )
-        self.weather_frame.grid(row=3,column=0,columnspan=3,padx=20,pady=20,sticky="nsew")
+        self.weather_frame.grid(row=3,column=0,columnspan=5,padx=20,pady=20,sticky="nsew")
 
 
         self.city_label = tk.Label(
@@ -162,15 +163,48 @@ class WeatherApp:
         self.details_label.pack()
 
 
-        button_frame = tk.Frame(
+        top_button_frame = tk.Frame(
             self.root,
             bg = self.window_bg_color
         )
-        button_frame.grid(row=4,column=0,columnspan=3,padx=5,pady=10)
+        top_button_frame.grid(row=4,column=0,columnspan=3,padx=5,pady=10)
+
+
+        self.plus_forecast_button = tk.Button(
+            top_button_frame,
+            text = "+1 day forecast",
+            font = ("Arial", 11),
+            bg = self.window_bg_color,
+            fg = self.window_fg_color,
+            #command = self.plus_forecast,
+            cursor = "hand2",
+            width = 18,
+            )
+        self.plus_forecast_button.pack(side="right",padx=10)
+
+
+        self.minus_forecast_button = tk.Button(
+            top_button_frame,
+            text = "-1 day forecast",
+            font = ("Arial", 11),
+            bg = self.window_bg_color,
+            fg = self.window_fg_color,
+            #command = self.minus_forecast,
+            cursor = "hand2",
+            width = 18,
+            )
+        self.minus_forecast_button.pack(side="left",padx=10)
+
+
+        bottom_button_frame = tk.Frame(
+            self.root,
+            bg = self.window_bg_color
+        )
+        bottom_button_frame.grid(row=5,column=0,columnspan=3,padx=5,pady=10)
 
 
         self.add_button = tk.Button(
-            button_frame,
+            bottom_button_frame,
             text = "Add to Favorites",
             font  = ("Arial", 11),
             bg = self.window_bg_color,
@@ -184,7 +218,7 @@ class WeatherApp:
 
 
         self.remove_button = tk.Button(
-            button_frame,
+            bottom_button_frame,
             text="Remove from Favorites",
             font=("Arial", 11),
             bg=self.window_bg_color,
@@ -198,7 +232,7 @@ class WeatherApp:
 
 
         self.unit_button = tk.Button(
-            button_frame,
+            bottom_button_frame,
             text = "Swap celcius/fahrenheit",
             font=("Arial", 11),
             bg=self.window_bg_color,
@@ -209,7 +243,7 @@ class WeatherApp:
         self.unit_button.pack(side="right",padx=5)
 
         self.unit_label = tk.Label(
-            button_frame,
+            bottom_button_frame,
             text = f"{self.current_unit}",
             font=("Arial", 11, "bold"),
             bg=self.window_bg_color,
@@ -306,6 +340,7 @@ class WeatherApp:
         if not data:
             return
 
+
         temp = data["main"]["temp"]
         feels_like = data["main"]["feels_like"]
         humidity = data["main"]["humidity"]
@@ -386,10 +421,10 @@ class WeatherApp:
 
 
     def swap_unit(self):
-        if self.current_unit == "F":
-            self.current_unit == "C"
-        elif self.current_unit == "C":
-            self.current_unit == "F"
+        if self.current_unit == "C":
+            self.current_unit = "F"
+        elif self.current_unit == "F":
+            self.current_unit = "C"
 
         self.unit_label.config(text=f"{self.current_unit}")
         print(f"Current unit is: {self.current_unit}")
@@ -438,3 +473,9 @@ class WeatherApp:
             self.favorites.remove(self.current_city)
             self.update_dropdown()
             self.save_favorites()
+
+    def display_forecast(self):
+        
+
+    def minus_forecast(self):
+
