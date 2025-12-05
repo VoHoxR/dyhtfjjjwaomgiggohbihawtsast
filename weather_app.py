@@ -1,3 +1,4 @@
+# Imports #
 import tkinter as tk
 from tkinter import messagebox as msgbx
 from tkinter.ttk import Combobox
@@ -5,6 +6,7 @@ import requests
 import json
 from datetime import datetime
 
+# WeatherApp
 class WeatherApp:
     """
     Weather my app till I forecast the precipitation chances
@@ -240,7 +242,7 @@ class WeatherApp:
             command = self.swap_unit,
             width = 18
             )
-        self.unit_button.pack(side="right",padx=5)
+        self.unit_button.pack(side="left",padx=5)
 
         self.unit_label = tk.Label(
             bottom_button_frame,
@@ -250,7 +252,8 @@ class WeatherApp:
             fg=self.window_fg_color,
             width = 5
             )
-        self.unit_label.pack(side="left",padx=5)
+        self.unit_label.pack(side="right",padx=5)
+
 
         for i in range(4):
             self.root.grid_rowconfigure(i, weight=1)
@@ -259,6 +262,9 @@ class WeatherApp:
 
 
     def search_weather(self):
+        """
+        Searches Weather
+        """
         city = self.city_entry.get().strip()
 
         if not city:
@@ -279,7 +285,9 @@ class WeatherApp:
 
 
     def get_coordinates(self,city):
-
+        """
+        Gets the coordinates
+        """
         try:
             params = {
                 "q": city,
@@ -315,7 +323,9 @@ class WeatherApp:
 
 
     def get_weather(self, lat, lon):
-
+        """
+        Gets the weather
+        """
         try:
             params = {
                 "lat": lat,
@@ -336,7 +346,9 @@ class WeatherApp:
 
 
     def display_weather(self, data, city):
-
+        """
+        Displays the weather
+        """
         if not data:
             return
 
@@ -344,14 +356,16 @@ class WeatherApp:
         temp = data["main"]["temp"]
         feels_like = data["main"]["feels_like"]
         humidity = data["main"]["humidity"]
-        description = data["weather"][0]["description"] ################################################################
+        description = data["weather"][0]["description"] ################################################################ Very useful commetns
         wind_speed = data["wind"]["speed"]
         self.current_city = city
+
 
         if self.current_unit == "C":
             self.temp_label.config(text=f"{((temp - 32)*(5/9)):.0f} C")
         elif self.current_unit == "F":
             self.temp_label.config(text=f"{temp} F")
+
 
         self.city_label.config(text=self.current_city)
         self.condition_label.config(text=description)
@@ -397,7 +411,9 @@ class WeatherApp:
       
 
     def update_dropdown(self):
-
+        """
+        updates the dropdown
+        """
         self.city_dropdown["values"] = self.favorites
 
         if not self.favorites:
@@ -407,7 +423,9 @@ class WeatherApp:
 
 
     def save_favorites(self):
-
+        """
+        saves the favorites
+        """
         try:
             data = {
                 "favorites": self.favorites,
@@ -421,15 +439,22 @@ class WeatherApp:
 
 
     def swap_unit(self):
+        """
+        swaps units
+        """
         if self.current_unit == "C":
             self.current_unit = "F"
         elif self.current_unit == "F":
             self.current_unit = "C"
 
         self.unit_label.config(text=f"{self.current_unit}")
-        print(f"Current unit is: {self.current_unit}")
+
+        #print(f"Current unit is: {self.current_unit}")
 
     def load_favorites(self):
+        """
+        loads the favorites
+        """
         try:
             with open(self.FAVORITES_FILE, "r") as f:
                 data = json.load(f)
@@ -463,7 +488,9 @@ class WeatherApp:
 
 
     def remove_from_favorites(self):
-
+        """
+        removes city from favorite
+        """
         if not self.current_city or self.current_city not in self.favorites:
             return
 
@@ -475,7 +502,7 @@ class WeatherApp:
             self.save_favorites()
 
     def display_forecast(self):
-        
+        pass
 
     def minus_forecast(self):
-
+        pass
