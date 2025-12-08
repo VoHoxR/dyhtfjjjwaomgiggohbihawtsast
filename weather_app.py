@@ -9,7 +9,7 @@ from datetime import datetime
 # WeatherApp
 class WeatherApp:
     """
-    Weather my app till I forecast the precipitation chances
+    class of WeatherApp
     """
     API_KEY = "d771e5e1b5ae57994e3319563f2acb60"
     WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather"
@@ -18,10 +18,10 @@ class WeatherApp:
 
     def __init__(self, root):
         """
-        does more junk
+        inits
         """
 
-        # Tkinter stuff
+        # Main window configuration
         self.root = root
         self.root.title("Weathuh Opp")
         self.root.geometry("700x500")
@@ -30,26 +30,25 @@ class WeatherApp:
         self.window_fg_color = "#9dc2b9"
         self.root.config(bg=self.window_bg_color)
 
+        # Other Variables
         self.favorites = []
         self.current_city = ""
         self.current_unit = "C"
         self.current_mode = 0
-        # make widgets
-
+        
+        # Load favorites.json and creates widgets for app
         self.load_favorites()
-
         self.create_widgets()
 
+        # Handles selecting a favorite from the dropdown
         if self.favorites:
             self.load_weather_from_favorite()
 
     def create_widgets(self):
         """
-        gwgwgrewgwgewewgewgewggwg2wgewgewgewgewgewgegewgewgewwgewwggrewwgwgrwbrgrewewggwggewggwgewgewgewgewegewgewgogegewewggewgewewggwgewgew
+        Creates widgets
         """
 
-
-        # title label
         title_label = tk.Label(
             self.root,
             text = "Hoodini",
@@ -58,8 +57,6 @@ class WeatherApp:
         )
         title_label.grid(row=0, column=0, columnspan=3, sticky="ew", pady=20)
 
-
-        # Favorites Section
         favorites_label = tk.Label(
             self.root,
             text= "Favorited Locations ",
@@ -70,6 +67,7 @@ class WeatherApp:
         favorites_label.grid(row=1,column=0,padx=10,sticky="e")
 
 
+        # Combobox holds all of the favorited locations to choose from.
         self.city_dropdown = Combobox(
             self.root,
             values = self.favorites,
@@ -79,10 +77,8 @@ class WeatherApp:
         self.city_dropdown.set("select city...")
         self.city_dropdown.bind("<<ComboboxSelected>>", self.load_weather_from_favorite)
         self.city_dropdown.grid(row=1,column=1,padx=5,sticky="w")
-        # Fav. Sec.
+        # 3 lines above pack city_dropdown and make it search a favorited city when it's selected.
 
-
-        # Search Label
         search_label = tk.Label(
             self.root,
             text = "Search for a city --> ",
@@ -92,7 +88,7 @@ class WeatherApp:
         )
         search_label.grid(row=2,column=0,padx=10,pady=10,sticky="e")
 
-
+        # Entry box for searching a city, can either press the search button or 'enter' to search.
         self.city_entry = tk.Entry(
             self.root,
             font = ("Courier new", 12),
@@ -100,7 +96,6 @@ class WeatherApp:
         )
         self.city_entry.grid(row=2, column=1, padx=5,pady=10,sticky="w")
         self.city_entry.bind("<Return>", lambda e: self.search_weather())
-
 
         search_button = tk.Button(
             self.root,
@@ -114,8 +109,7 @@ class WeatherApp:
         )
         search_button.grid(row=2, column=2,padx=5,pady=10, sticky="w")
 
-
-        #weathuh displayuh framuh
+        # Holds the info retrieved about a city
         self.weather_frame = tk.Frame(
             self.root,
             bg = self.window_bg_color,
@@ -124,7 +118,7 @@ class WeatherApp:
         )
         self.weather_frame.grid(row=3,column=0,columnspan=5,padx=20,pady=20,sticky="nsew")
 
-
+        # Displays name of city when one is searched for and found.
         self.city_label = tk.Label(
             self.weather_frame,
             text = "Search for a city",
@@ -134,7 +128,7 @@ class WeatherApp:
         )
         self.city_label.pack()
 
-
+        # Displays temperature of city when found
         self.temp_label = tk.Label(
             self.weather_frame,
             text = "",
@@ -144,7 +138,7 @@ class WeatherApp:
         )
         self.temp_label.pack(pady=5)
 
-
+        # Displays cloud conditions of city when found
         self.condition_label = tk.Label(
             self.weather_frame,
             text = "",
@@ -154,7 +148,7 @@ class WeatherApp:
         )
         self.condition_label.pack(pady=5)
 
-
+        # Displays other info, like the Feels-Like temp, humidity, and wind speeds
         self.details_label = tk.Label(
             self.weather_frame,
             text = "",
@@ -164,14 +158,14 @@ class WeatherApp:
         )
         self.details_label.pack()
 
-
+        # Just to keep the buttons that change the forecast type away from the rest.
         top_button_frame = tk.Frame(
             self.root,
             bg = self.window_bg_color
         )
         top_button_frame.grid(row=4,column=0,columnspan=3,padx=5,pady=10)
 
-
+        # Changes forecast to 1 more day than the previous, up to 5 day forecast.
         self.plus_forecast_button = tk.Button(
             top_button_frame,
             text = "+1 day forecast",
@@ -184,7 +178,7 @@ class WeatherApp:
             )
         self.plus_forecast_button.pack(side="right",padx=10)
 
-
+        # Opposite of above. one less day from previous, down to curent day forecast.
         self.minus_forecast_button = tk.Button(
             top_button_frame,
             text = "-1 day forecast",
@@ -197,14 +191,14 @@ class WeatherApp:
             )
         self.minus_forecast_button.pack(side="left",padx=10)
 
-
+        # Holds the add_Button, remove_button, unit_button, and unit_label.
         bottom_button_frame = tk.Frame(
             self.root,
             bg = self.window_bg_color
         )
         bottom_button_frame.grid(row=5,column=0,columnspan=3,padx=5,pady=10)
 
-
+        # Adds the curently viewed city to the Favorited Locations dropdown, if not already.
         self.add_button = tk.Button(
             bottom_button_frame,
             text = "Add to Favorites",
@@ -218,7 +212,7 @@ class WeatherApp:
         )
         self.add_button.pack(side="left",padx=5)
 
-
+        # Removes curently viewed city from the dropdown
         self.remove_button = tk.Button(
             bottom_button_frame,
             text="Remove from Favorites",
@@ -232,7 +226,7 @@ class WeatherApp:
         )
         self.remove_button.pack(side="left", padx=5)
 
-
+        # Swaps the unit used in the forecast between Celcius and Fahrenheit
         self.unit_button = tk.Button(
             bottom_button_frame,
             text = "Swap celcius/fahrenheit",
@@ -244,6 +238,7 @@ class WeatherApp:
             )
         self.unit_button.pack(side="left",padx=5)
 
+        # Just makes it easier to tell what unit a user is using. (ahaha)
         self.unit_label = tk.Label(
             bottom_button_frame,
             text = f"{self.current_unit}",
@@ -255,6 +250,7 @@ class WeatherApp:
         self.unit_label.pack(side="right",padx=5)
 
 
+        # Makes all the widgets not align STUPID (no touchy)
         for i in range(4):
             self.root.grid_rowconfigure(i, weight=1)
         for i in range(3):
@@ -265,17 +261,19 @@ class WeatherApp:
         """
         Searches Weather
         """
+
         city = self.city_entry.get().strip()
 
-        if not city:
+        if not city: # If no city is typed inside the search box
             msgbx.showwarning("No City!", "You did not enter a city name!\nPlease enter a city name.")
             return
 
         coords = self.get_coordinates(city)
-        if not coords:
+        if not coords: # If it can't find the coordinate location for a city entered
             msgbx.showerror("No City", "That City wasn't found!\nPlease enter a valid city.")
             return
 
+        # If neither if statement is triggered, save coords into 3 vars
         lat, lon, full_city_name = coords
 
         weather_data = self.get_weather(lat, lon)
@@ -288,6 +286,10 @@ class WeatherApp:
         """
         Gets the coordinates
         """
+
+        # Attempts to retrieve coordinates of the city that is searched
+        # including: City name, Latitude, Longitude, State (or equivalent),
+        # and Country
         try:
             params = {
                 "q": city,
@@ -326,6 +328,7 @@ class WeatherApp:
         """
         Gets the weather
         """
+        # Attempts to get the weather conditions on a city if it is found.
         try:
             params = {
                 "lat": lat,
@@ -349,7 +352,8 @@ class WeatherApp:
         """
         Displays the weather
         """
-        if not data:
+    
+        if not data: # If it doesn't get any weather data to use, quit immediately
             return
 
 
@@ -360,13 +364,13 @@ class WeatherApp:
         wind_speed = data["wind"]["speed"]
         self.current_city = city
 
-
+        # Temperature is always provided as Fahrenheit, so display it if the user wants Fahrenheit, convert it then display it if they want Celcius.
         if self.current_unit == "C":
-            self.temp_label.config(text=f"{((temp - 32)*(5/9)):.0f} C")
+            self.temp_label.config(text=f"{((temp - 32)*(5/9)):.1f} C")
         elif self.current_unit == "F":
-            self.temp_label.config(text=f"{temp} F")
+            self.temp_label.config(text=f"{temp:.0f} F")
 
-
+        # Changes all the labels in weather_frame to show the city information
         self.city_label.config(text=self.current_city)
         self.condition_label.config(text=description)
         self.details_label.config(text=f"Feels like: {feels_like:.0f} F | Humidity: {humidity}% | Wind: {wind_speed:.1f} mph")
@@ -396,19 +400,7 @@ class WeatherApp:
         # Save our favorites list to a file
         self.save_favorites()
 
-
-    def update_dropdown(self):
-        """
-        Update the favorites dropdown with our current favorites list
-        """
-
-        self.city_dropdown["values"] = self.favorites
-
-        if not self.favorites:
-            self.city_dropdown.set("No favorites found")
-        else:
-            self.city_dropdown.set("Select favorite city...")
-      
+# You are absolutely insane, there was no duplicate function here.     
 
     def update_dropdown(self):
         """
@@ -426,6 +418,8 @@ class WeatherApp:
         """
         saves the favorites
         """
+
+        # Usually shouldn't error, saves all the items in self.favorites into a json.
         try:
             data = {
                 "favorites": self.favorites,
@@ -442,6 +436,10 @@ class WeatherApp:
         """
         swaps units
         """
+
+        # Very stupid, if A is F then A is C
+        # but if A is not F and is in fact C then A is F.
+        # Also updates unit_label to show the correct unit.
         if self.current_unit == "C":
             self.current_unit = "F"
         elif self.current_unit == "F":
@@ -455,6 +453,8 @@ class WeatherApp:
         """
         loads the favorites
         """
+
+        # Loads the json file and appends the data to the combobox.
         try:
             with open(self.FAVORITES_FILE, "r") as f:
                 data = json.load(f)
@@ -506,3 +506,6 @@ class WeatherApp:
 
     def minus_forecast(self):
         pass
+
+    def multi_forecast(self):
+        print("I am DEFINETLY doing something, and I do not-- I repeat-- NOT\n conflict with the swap unit.")
