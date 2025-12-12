@@ -168,7 +168,7 @@ class WeatherApp:
         # Changes forecast to 1 more day than the previous, up to 5 day forecast.
         self.plus_forecast_button = tk.Button(
             top_button_frame,
-            text = "+1 day forecast",
+            text = "Not functional",
             font = ("Arial", 11),
             bg = self.window_bg_color,
             fg = self.window_fg_color,
@@ -181,7 +181,7 @@ class WeatherApp:
         # Opposite of above. one less day from previous, down to curent day forecast.
         self.minus_forecast_button = tk.Button(
             top_button_frame,
-            text = "-1 day forecast",
+            text = "not Functional",
             font = ("Arial", 11),
             bg = self.window_bg_color,
             fg = self.window_fg_color,
@@ -261,19 +261,28 @@ class WeatherApp:
         """
         Searches Weather
         """
+        dropdown_active = self.city_dropdown.get()
+    
 
         city = self.city_entry.get().strip()
 
         if not city: # If no city is typed inside the search box
+
+            if dropdown_active != "select city...":
+                return
+
             msgbx.showwarning("No City!", "You did not enter a city name!\nPlease enter a city name.")
             return
-
+       
+                    
         coords = self.get_coordinates(city)
         if not coords: # If it can't find the coordinate location for a city entered
             msgbx.showerror("No City", "That City wasn't found!\nPlease enter a valid city.")
             return
 
+
         # If neither if statement is triggered, save coords into 3 vars
+        self.city_dropdown.config(text="select city...")
         lat, lon, full_city_name = coords
 
         weather_data = self.get_weather(lat, lon)
@@ -374,7 +383,7 @@ class WeatherApp:
         self.city_label.config(text=self.current_city)
         self.condition_label.config(text=description)
         self.details_label.config(text=f"Feels like: {feels_like:.0f} F | Humidity: {humidity}% | Wind: {wind_speed:.1f} mph")
-        self.city_entry.delete(0, 'end')
+        
 
 
     def add_to_favorites(self):
@@ -446,6 +455,8 @@ class WeatherApp:
             self.current_unit = "C"
 
         self.unit_label.config(text=f"{self.current_unit}")
+        self.load_weather_from_favorite()
+        self.search_weather()
 
         #print(f"Current unit is: {self.current_unit}")
 
@@ -485,7 +496,7 @@ class WeatherApp:
             weather_data = self.get_weather(lat, lon)
             if weather_data:
                 self.display_weather(weather_data, full_city_name)
-
+            self.city_entry.delete(0, 'end')
 
     def remove_from_favorites(self):
         """
